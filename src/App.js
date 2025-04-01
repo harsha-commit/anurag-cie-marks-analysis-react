@@ -9,6 +9,8 @@ const App = () => {
   const [selectedColumn, setSelectedColumn] = useState('');
   const [results, setResults] = useState({});
 
+  console.log(selectedColumn);
+
   const handleFileUpload = (worksheet) => {
     console.log('File uploaded:', worksheet);
     setData(worksheet);
