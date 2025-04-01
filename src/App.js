@@ -34,8 +34,8 @@ const App = () => {
     const sections = {};
 
     for (let i = 1; i < data.length; i++) {
-      const section = data[i][0].trim(); // Use the 1st column (index 0) for section and strip whitespace
-      const subject = data[i][1].trim(); // Use the 2nd column (index 1) for subject and strip whitespace
+      const section = data[i][0] // Use the 1st column (index 0) for section and strip whitespace
+      const subject = data[i][1] // Use the 2nd column (index 1) for subject and strip whitespace
       const marks = Math.ceil(data[i][columnIndex]);
       console.log(`Processing section: ${section}, subject: ${subject}, marks: ${marks}`);
 
