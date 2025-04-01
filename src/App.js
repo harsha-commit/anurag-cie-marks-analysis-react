@@ -7,7 +7,7 @@ import './App.css';
 const App = () => {
   const [data, setData] = useState([]);
   const [selectedColumn, setSelectedColumn] = useState('');
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState({});
 
   const handleFileUpload = (worksheet) => {
     console.log('File uploaded:', worksheet);
@@ -29,33 +29,19 @@ const App = () => {
       return;
     }
 
-    const subjects = [
-      'Discrete Mathematics',
-      'Data Wrangling and Visualization',
-      'Data Base Management Systems',
-      'Fundamentals of Artificial Intelligence',
-      'Design and Analysis of Algorithms',
-      'Discrete Mathematics',
-      'Data Wrangling and Visualization Lab',
-      'Database Management Systems Lab',
-    ];
-
-    const results = subjects.map(subject => ({
-      subject,
-      above80: 0,
-      between60and80: 0,
-      between40and60: 0,
-      below40: 0,
-    }));
-
-    console.log('Initial results:', results);
+    const sections = {};
 
     for (let i = 1; i < data.length; i++) {
-      const subject = data[i][1].trim(); // Strip whitespace from subject
+      const section = data[i][0].trim(); // Use the 1st column (index 0) for section and strip whitespace
+      const subject = data[i][1].trim(); // Use the 2nd column (index 1) for subject and strip whitespace
       const marks = Math.ceil(data[i][columnIndex]);
-      console.log(`Processing subject: ${subject}, marks: ${marks}`);
+      console.log(`Processing section: ${section}, subject: ${subject}, marks: ${marks}`);
 
-      const result = results.find(result => result.subject === subject);
+      if (!sections[section]) {
+        sections[section] = [];
+      }
+
+      const result = sections[section].find(result => result.subject === subject);
       if (result) {
         if (column === "MID Weightage Marks") {
           if (marks >= 24) result.above80++;
@@ -74,12 +60,18 @@ const App = () => {
           else result.below40++;
         }
       } else {
-        console.log(`Subject not found in results array: ${subject}`);
+        sections[section].push({
+          subject,
+          above80: column === "MID Weightage Marks" ? (marks >= 24 ? 1 : 0) : column === "Assignment Weightage Marks" ? (marks >= 16 ? 1 : 0) : (marks >= 40 ? 1 : 0),
+          between60and80: column === "MID Weightage Marks" ? (marks >= 18 && marks < 24 ? 1 : 0) : column === "Assignment Weightage Marks" ? (marks >= 12 && marks < 16 ? 1 : 0) : (marks >= 30 && marks < 40 ? 1 : 0),
+          between40and60: column === "MID Weightage Marks" ? (marks >= 12 && marks < 18 ? 1 : 0) : column === "Assignment Weightage Marks" ? (marks >= 8 && marks < 12 ? 1 : 0) : (marks >= 20 && marks < 30 ? 1 : 0),
+          below40: column === "MID Weightage Marks" ? (marks < 12 ? 1 : 0) : column === "Assignment Weightage Marks" ? (marks < 8 ? 1 : 0) : (marks < 20 ? 1 : 0)
+        });
       }
     }
 
-    console.log('Final results:', results);
-    setResults(results);
+    console.log('Final results:', sections);
+    setResults(sections);
   };
 
   return (
@@ -87,7 +79,12 @@ const App = () => {
       <h1>Grade Calculator</h1>
       <FileUpload onFileUpload={handleFileUpload} />
       <ColumnSelector onSelectColumn={handleColumnSelect} />
-      <ResultTable results={results} />
+      {Object.keys(results).map(section => (
+        <div key={section}>
+          <h2>Section: {section}</h2>
+          <ResultTable results={results[section]} />
+        </div>
+      ))}
     </div>
   );
 };

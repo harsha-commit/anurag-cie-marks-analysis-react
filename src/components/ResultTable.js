@@ -3,7 +3,7 @@ import React from 'react';
 const ResultTable = ({ results }) => {
   // Filter out rows where all values are zero
   const filteredResults = results.filter(
-    result => result.above80 !== 0 || result.between60and80 !== 0 || result.between40and60 !== 0 || result.below40 !== 0
+    result => result.above80 || result.between60and80 || result.between40and60 || result.below40
   );
 
   return (
@@ -12,10 +12,10 @@ const ResultTable = ({ results }) => {
         <tr>
           <th>S. No.</th>
           <th>Name of the Subject</th>
-          <th>Above 80% 16-20 Marks</th>
-          <th>60% to 80% 12-15 Marks</th>
-          <th>40% to 60% 8-11 Marks</th>
-          <th>Less than 40% 0-7 Marks</th>
+          <th>Above 80%</th>
+          <th>60% to 80%</th>
+          <th>40% to 60%</th>
+          <th>Less than 40%</th>
         </tr>
       </thead>
       <tbody>
